@@ -16,7 +16,7 @@ export default function Sidebar({
   return (
     <div>
       <div className="brand">
-        <h1>Ocean Notes</h1>
+        <h1 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>Ocean Notes</h1>
         <button
           className="btn"
           onClick={onNew}

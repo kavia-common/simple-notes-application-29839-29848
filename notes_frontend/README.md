@@ -31,17 +31,11 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 ### Colors
 
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
-```
+Ocean Professional theme colors are defined as CSS variables in `src/App.css`:
+- --primary: #2563EB
+- --secondary: #F59E0B
+- --background: #f9fafb
+- --surface: #ffffff
 
 ### Components
 
@@ -52,6 +46,24 @@ Common components include:
 - Container (`.container`)
 - Navigation (`.navbar`)
 - Typography (`.title`, `.subtitle`, `.description`)
+
+## App Header and Sidebar
+
+A hybrid top bar with a collapsible sidebar is implemented.
+
+- AppHeader: `src/components/layout/AppHeader.jsx`
+  - Left: hamburger button to toggle sidebar (aria-controls="app-sidebar", aria-expanded)
+  - Center: global search input ("Search notes…")
+  - Right: primary "New Note" button and a Settings icon
+  - Sticky (top:0) with subtle shadow
+- Layout: `src/components/Layout.js`
+  - Accepts `sidebarOpen`, `onCloseSidebar`, `header`, and `sidebar` props
+  - Desktop: collapsible width; Mobile: overlay slide-in sidebar
+- State persistence: sidebar open/closed preference is stored in `localStorage` under `ocean-notes:ui:sidebar-open`.
+
+To trigger actions:
+- Search is propagated via `onSearch` passed to `AppHeader` (wired to the existing search).
+- "New Note" calls the existing creation flow.
 
 ## Learn More
 

@@ -1,0 +1,104 @@
+.app-header .icon-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text);
+  height: 36px;
+  width: 36px;
+  min-width: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 50ms ease, box-shadow 150ms ease;
+}
+
+.app-header .icon-btn:hover {
+  background: rgba(17, 24, 39, 0.04);
+}
+
+.app-header .icon-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring);
+  border-color: var(--primary);
+}
+
+.app-header .hamburger,
+.app-header .gear {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  position: relative;
+}
+
+/* Simple hamburger icon with 3 bars */
+.app-header .hamburger::before,
+.app-header .hamburger::after,
+.app-header .hamburger {
+  background: currentColor;
+}
+.app-header .hamburger::before,
+.app-header .hamburger::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+}
+.app-header .hamburger {
+  height: 2px;
+  border-radius: 2px;
+  top: 8px;
+}
+.app-header .hamburger::before { top: 2px; }
+.app-header .hamburger::after { top: 14px; }
+
+/* Simple gear icon using borders */
+.app-header .gear {
+  box-sizing: border-box;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+.app-header .gear::before,
+.app-header .gear::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  width: 2px;
+  height: 10px;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+.app-header .gear::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.app-header .gear::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Search input expand on focus (visual emphasis is handled via class toggle) */
+.search-wrap.focused {
+  max-width: 680px !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .app-header .app-title {
+    font-size: 16px;
+  }
+  .app-header .right .btn {
+    padding: 8px 10px;
+  }
+}
+
+/* Visually hidden helper class */
+.sr-only {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}

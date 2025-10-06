@@ -15,7 +15,7 @@ function formatUpdatedAt(ts) {
 // PUBLIC_INTERFACE
 export default function NotesList({ notes, selectedId, onSelect }) {
   return (
-    <div className="notes-list" role="list" aria-label="Notes list">
+    <div className="notes-list" role="list" aria-label="Notes list" id="notes-list">
       {notes.map((n) => {
         const isActive = n.id === selectedId;
         return (

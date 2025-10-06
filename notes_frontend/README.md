@@ -55,15 +55,24 @@ A hybrid top bar with a collapsible sidebar is implemented.
   - Left: hamburger button to toggle sidebar (aria-controls="app-sidebar", aria-expanded)
   - Center: global search input ("Search notes…")
   - Right: primary "New Note" button and a Settings icon
+  - Tabs (filters): All, Favorites, Archived with accessible roles (tablist/tab), keyboard navigation (Left/Right/Home/End), and active styling.
   - Sticky (top:0) with subtle shadow
 - Layout: `src/components/Layout.js`
   - Accepts `sidebarOpen`, `onCloseSidebar`, `header`, and `sidebar` props
   - Desktop: collapsible width; Mobile: overlay slide-in sidebar
-- State persistence: sidebar open/closed preference is stored in `localStorage` under `ocean-notes:ui:sidebar-open`.
+- State persistence:
+  - Sidebar open/closed preference is stored in `localStorage` under `ocean-notes:ui:sidebar-open`.
+  - Selected notes filter tab is stored in `localStorage` under `ocean-notes:notesFilter`.
 
-To trigger actions:
-- Search is propagated via `onSearch` passed to `AppHeader` (wired to the existing search).
-- "New Note" calls the existing creation flow.
+### Filtering behavior
+
+- Tabs filter the notes list in combination with the search query.
+- Filters:
+  - `All`: show all notes
+  - `Favorites`: show notes where `note.favorite` or `note.isFavorite` is true
+  - `Archived`: show notes where `note.archived` or `note.isArchived` is true
+- Missing fields are treated as `false` (non-destructive defaults).
+- The list region is labeled with `id="notes-list"` and tabs use `aria-controls="notes-list"`.
 
 ## Learn More
 

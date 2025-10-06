@@ -7,14 +7,17 @@ import React, { useEffect, useRef, useState } from 'react';
  * Props:
  * - isSidebarOpen: boolean controlling sidebar visibility (for aria-expanded)
  * - onToggleSidebar: function to toggle sidebar (required)
- * - onSearch: function to handle global search change (optional, TODO integrated)
+ * - onSearch: function to handle global search change (optional)
  * - onNewNote: function called when "New Note" is clicked (optional)
  * - context: optional string or node for breadcrumb/context (optional)
+ * - filter: current filter value ('all' | 'favorites' | 'archived')
+ * - onFilterChange: callback when filter changes
  *
  * Accessibility:
  * - Hamburger button has aria-controls="app-sidebar" and aria-expanded state
  * - Focusable controls with keyboard support (Space/Enter)
  * - Header is marked as role="banner"
+ * - Tabs use role="tablist"/"tab" with aria-selected and keyboard left/right navigation.
  */
 // PUBLIC_INTERFACE
 export default function AppHeader({
@@ -22,10 +25,20 @@ export default function AppHeader({
   onToggleSidebar,
   onSearch,
   onNewNote,
-  context
+  context,
+  filter = 'all',
+  onFilterChange
 }) {
   const [query, setQuery] = useState('');
   const inputRef = useRef(null);
+
+  // Tabs state and persistence local fallback (if parent doesn't manage)
+  const TABS = [
+    { id: 'all', label: 'All' },
+    { id: 'favorites', label: 'Favorites' },
+    { id: 'archived', label: 'Archived' },
+  ];
+  const tabRefs = useRef({}); // store refs for focus mgmt
 
   // Expand-on-focus behavior: store original width and expand on focus visually via class.
   const [isFocused, setIsFocused] = useState(false);
@@ -46,8 +59,47 @@ export default function AppHeader({
     setQuery(val);
     if (onSearch) {
       onSearch(val);
-    } else {
-      // TODO: Wire to global search when available
+    }
+  };
+
+  // PUBLIC_INTERFACE
+  function onInternalFilterChange(next) {
+    /** Update filter via prop callback and persist to localStorage. */
+    onFilterChange?.(next);
+    try {
+      window.localStorage.setItem('ocean-notes:notesFilter', JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  }
+
+  const handleTabKeyDown = (e) => {
+    const currentIndex = TABS.findIndex(t => t.id === filter);
+    if (e.key === 'ArrowRight' || e.key === 'Right') {
+      e.preventDefault();
+      const nextIndex = (currentIndex + 1) % TABS.length;
+      const next = TABS[nextIndex].id;
+      onInternalFilterChange(next);
+      tabRefs.current[next]?.focus();
+    } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+      e.preventDefault();
+      const nextIndex = (currentIndex - 1 + TABS.length) % TABS.length;
+      const next = TABS[nextIndex].id;
+      onInternalFilterChange(next);
+      tabRefs.current[next]?.focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      const next = TABS[0].id;
+      onInternalFilterChange(next);
+      tabRefs.current[next]?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      const next = TABS[TABS.length - 1].id;
+      onInternalFilterChange(next);
+      tabRefs.current[next]?.focus();
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      // already selected by click/arrow; noop for now
     }
   };
 
@@ -71,8 +123,8 @@ export default function AppHeader({
           gridTemplateColumns: 'auto 1fr auto',
           alignItems: 'center',
           gap: 12,
-          height: 64,
-          padding: '0 16px',
+          height: 'auto',
+          padding: '8px 16px 0',
         }}
       >
         <div
@@ -147,6 +199,36 @@ export default function AppHeader({
           >
             <span aria-hidden="true" className="gear" />
           </button>
+        </div>
+      </div>
+
+      {/* Tabs row */}
+      <div className="app-header-tabs-wrap" style={{ padding: '8px 16px 10px' }}>
+        <div
+          className="tabs"
+          role="tablist"
+          aria-label="Notes filter tabs"
+          aria-controls="notes-list"
+        >
+          {TABS.map((t) => {
+            const selected = filter === t.id;
+            return (
+              <button
+                key={t.id}
+                role="tab"
+                ref={(el) => { tabRefs.current[t.id] = el; }}
+                aria-selected={selected}
+                aria-controls="notes-list"
+                tabIndex={selected ? 0 : -1}
+                className={`tab-pill ${selected ? 'active' : ''}`}
+                onClick={() => onInternalFilterChange(t.id)}
+                onKeyDown={handleTabKeyDown}
+                type="button"
+              >
+                <span className="tab-label">{t.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </header>
